@@ -29,7 +29,7 @@ function createTestnetConfig(network) {
         case 'polygon':
             url = 'https://polygon-rpc.com';
             break;
-        case 'fantomtest':
+        case 'fantomTest':
             url = 'https://rpc.testnet.fantom.network';
             break;
         case 'fantom':
@@ -66,12 +66,12 @@ module.exports = {
             url: 'http://127.0.0.1:8545/',
             timeout: 60000,
             forking: {
-                url: createTestnetConfig('fantomtest').url,
+                url: createTestnetConfig('fantomTest').url,
             },
         },
         mumbai: createTestnetConfig('mumbai'),
         rinkeby: createTestnetConfig('rinkeby'),
-        fantomtest: createTestnetConfig('fantomtest'),
+        fantomTest: createTestnetConfig('fantomTest'),
     },
     solidity: {
         version: '0.8.14',

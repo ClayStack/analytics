@@ -1,8 +1,8 @@
 {
     "name": "hardhat-project",
     "scripts": {
-        "get-db": "HARDHAT_NETWORK=mumbai node ./src/main.js 0xDb7Cb98bb2834b3857816fE6eE709A8cCCA6AFBB",
-        "get-balance": "HARDHAT_NETWORK=mumbai node ./src/get-balance.js 0xDb7Cb98bb2834b3857816fE6eE709A8cCCA6AFBB"
+        "get-db": "node ./src/db.js",
+        "get-balance": "HARDHAT_NETWORK=fantomTest node ./src/get-balance.js 0xDb7Cb98bb2834b3857816fE6eE709A8cCCA6AFBB"
     },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.6",
@@ -28,6 +28,8 @@
         "solidity-coverage": "^0.7.21"
     },
     "dependencies": {
-        "mongodb": "^4.7.0"
+        "date-fns": "^2.28.0",
+        "mongodb": "^4.7.0",
+        "superjson": "^1.9.1"
     }
 }
