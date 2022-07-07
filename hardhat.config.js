@@ -8,18 +8,61 @@ const MNEMONIC =
 const INFURA_PROJECT_ID = process.env.INFURA_PROJECT_ID || '';
 
 const chainIds = {
-    ganache: 1337,
-    goerli: 5,
     hardhat: 31337,
-    kovan: 42,
+    ganache: 1337,
     mainnet: 1,
-    rinkeby: 4,
     ropsten: 3,
-    mumbai: 80001,
+    rinkeby: 4,
+    goerli: 5,
+    kovan: 42,
+    fantom: 250,
+    fantomTest: 4002,
     polygon: 137,
+    mumbai: 80001,
+};
+const forkingBlockNumber = {
+    mainnet: 15094221,
+    fantom: 42213852,
+    polygon: 30435632,
 };
 
-function createTestnetConfig(network) {
+const getNetworkUrl = (network) => {
+    let url = 'https://' + network + '.infura.io/v3/' + INFURA_PROJECT_ID;
+
+    switch (network) {
+        case 'mumbai':
+            url = 'https://matic-mumbai.chainstacklabs.com';
+            break;
+        case 'polygon':
+            url = 'https://polygon-rpc.com';
+            break;
+        case 'fantomTest':
+            url = 'https://rpc.testnet.fantom.network';
+            break;
+        case 'fantom':
+            url = 'https://rpc2.fantom.network';
+            break;
+    }
+    return url;
+};
+const getForkingConfig = (network) => ({
+    url: getNetworkUrl(network),
+    blockNumber: forkingBlockNumber[network] ?? undefined,
+});
+
+const getTestnetConfig = (network) => ({
+    chainId: chainIds[network],
+    url: getNetworkUrl(network),
+    forking: getForkingConfig(network),
+    accounts: {
+        count: 20,
+        initialIndex: 0,
+        mnemonic: MNEMONIC,
+        path: "m/44'/60'/0'/0",
+    },
+});
+
+const createTestnetConfig = (network) => {
     let url = 'https://' + network + '.infura.io/v3/' + INFURA_PROJECT_ID;
 
     switch (network) {
@@ -48,30 +91,27 @@ function createTestnetConfig(network) {
         url,
         forking: {
             url,
-            blockNumber: 10967472,
+            blockNumber: forkingBlockNumber[network] ?? undefined,
         },
     };
-}
+};
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
     networks: {
         hardhat: {
-            forking: {
-                url: createTestnetConfig('mumbai').url,
-            },
+            forking: getForkingConfig('mainnet'),
         },
         local: {
             url: 'http://127.0.0.1:8545/',
-            timeout: 60000,
-            forking: {
-                url: createTestnetConfig('fantomTest').url,
-            },
+            timeout: 600000,
+            forking: getForkingConfig('mainnet'),
         },
-        mumbai: createTestnetConfig('mumbai'),
-        rinkeby: createTestnetConfig('rinkeby'),
-        fantomTest: createTestnetConfig('fantomTest'),
+        mainnet: getTestnetConfig('mainnet'),
+        mumbai: getTestnetConfig('mumbai'),
+        rinkeby: getTestnetConfig('rinkeby'),
+        fantomTest: getTestnetConfig('fantomTest'),
     },
     solidity: {
         version: '0.8.14',

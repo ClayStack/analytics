@@ -1,8 +1,10 @@
 {
     "name": "hardhat-project",
     "scripts": {
+        "run-node": "hardhat node",
+        "run-job": "HARDHAT_NETWORK=local node ./src/main.js",
         "get-db": "node ./src/db.js",
-        "get-balance": "HARDHAT_NETWORK=fantomTest node ./src/get-balance.js 0xDb7Cb98bb2834b3857816fE6eE709A8cCCA6AFBB"
+        "get-balance": "HARDHAT_NETWORK=mainnet node ./src/get-balance.js"
     },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.6",
