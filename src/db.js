@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const { MongoClient } = require('mongodb');
-const client = new MongoClient(process.env.LOCAL_MONGO_URL);
+const client = new MongoClient(process.env.MONGO_URL);
 
 const db = client.db('claystack');
 

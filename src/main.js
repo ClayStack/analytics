@@ -5,15 +5,17 @@ const { handlers } = require('./db');
 const { getUserBalances, getTokenContracts } = require('./get-balance');
 
 const BATCH_SIZE = 100;
-const MAX_PAGES = 5;
+const MAX_PAGES = Infinity;
 const NETWORK = 'mainnet';
+
+const formatLabel = (label) => label.padEnd(24, ' ');
 
 const main = async () => {
     const now = performance.now();
     const START_AT_PAGE = await handlers.getInitialPage(BATCH_SIZE);
 
-    console.log('Running on:', hre.network.name);
-    console.log('Starting at page:', START_AT_PAGE);
+    console.log(formatLabel('Running on:'), hre.network.name);
+    console.log(formatLabel('Starting at page:'), START_AT_PAGE);
 
     const tokenContracts = getTokenContracts(NETWORK);
 
@@ -22,11 +24,11 @@ const main = async () => {
     const iter = Array.from({ length: totalPages }, (_, i) => i + START_AT_PAGE);
 
     for await (page of iter) {
-        console.log('page:', page);
         const users = await handlers.getUsers(page, BATCH_SIZE);
         const balances = await Promise.all(
             users.map((u) => getUserBalances(u, NETWORK, tokenContracts)),
         );
+        console.log(formatLabel('Finished page:'), page);
         await handlers.saveUsers(balances);
         if (page >= MAX_PAGES) {
             break;
