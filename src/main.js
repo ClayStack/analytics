@@ -1,5 +1,4 @@
 const { formatDuration, intervalToDuration } = require('date-fns');
-const hre = require('hardhat');
 
 const { handlers } = require('./db');
 const { getUserBalances, getTokenContracts } = require('./get-balance');
@@ -12,14 +11,15 @@ const formatLabel = (label) => label.padEnd(24, ' ');
 
 const main = async () => {
     const now = performance.now();
+    await handlers.init();
     const START_AT_PAGE = await handlers.getInitialPage(BATCH_SIZE);
 
-    console.log(formatLabel('Running on:'), hre.network.name);
     console.log(formatLabel('Starting at page:'), START_AT_PAGE);
 
     const tokenContracts = getTokenContracts(NETWORK);
 
     const totalUsers = await handlers.getUserCount();
+
     const totalPages = Math.ceil(totalUsers / BATCH_SIZE);
     const iter = Array.from({ length: totalPages }, (_, i) => i + START_AT_PAGE);
 

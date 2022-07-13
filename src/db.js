@@ -1,15 +1,19 @@
 require('dotenv').config();
 
 const { MongoClient } = require('mongodb');
-const client = new MongoClient(process.env.MONGO_URL);
+const readClient = new MongoClient(process.env.READ_MONGO_URL);
+const writeClient = new MongoClient(process.env.WRITE_MONGO_URL);
 
-const db = client.db('claystack');
+const readDb = readClient.db(process.env.READ_MONGO_DB);
+const writeDb = writeClient.db(process.env.WRITE_MONGO_DB);
 
-const accounts = db.collection('accounts');
-const balanceHistory = db.collection('balance_history');
+const accounts = readDb.collection('accounts');
+const balanceHistory = writeDb.collection('balance_history');
 
 const handlers = {
-    init: () => client.connect(),
+    init: async () => {
+        await Promise.all([readClient.connect(), writeClient.connect()]);
+    },
     getUserCount: async () => accounts.countDocuments(),
     getInitialPage: async (batchSize = 100) => {
         const count = await balanceHistory.countDocuments();

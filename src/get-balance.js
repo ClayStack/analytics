@@ -1,7 +1,9 @@
-const { ethers } = require('hardhat');
+require('dotenv').config();
+
+const { ethers } = require('ethers');
 const TokenAbi = require('./abi/Token.json');
 
-const network = process.env.HARDHAT_NETWORK;
+const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_URL);
 
 const nativeTokens = {
     mainnet: 'ETH',
@@ -30,7 +32,7 @@ const tokens = {
 const getTokenContracts = (network) => {
     const networkTokens = tokens[network];
     return Object.entries(networkTokens).reduce((acc, [network, tokenAddress]) => {
-        acc[network] = new ethers.Contract(tokenAddress, TokenAbi, ethers.provider);
+        acc[network] = new ethers.Contract(tokenAddress, TokenAbi, provider);
         return acc;
     }, {});
 };
@@ -39,7 +41,7 @@ const getUserBalances = async (userAddress, network, tokenContracts) => {
     const networkTokens = tokens[network];
     const nativeToken = nativeTokens[network];
 
-    const nativeBalanceReq = ethers.provider.getBalance(userAddress);
+    const nativeBalanceReq = provider.getBalance(userAddress);
     const tokenBalancesReq = Object.keys(networkTokens).map((token) => {
         return tokenContracts[token].balanceOf(userAddress);
     });

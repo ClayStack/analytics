@@ -2,7 +2,7 @@
     "name": "hardhat-project",
     "scripts": {
         "run-node": "hardhat node",
-        "run-job": "HARDHAT_NETWORK=local node ./src/main.js",
+        "run-job": "node ./src/main.js",
         "get-db": "node ./src/db.js",
         "get-balance": "HARDHAT_NETWORK=mainnet node ./src/get-balance.js"
     },
