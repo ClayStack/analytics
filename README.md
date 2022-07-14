@@ -5,8 +5,13 @@
 -   Prepare an `.env` file with the following details:
 
 ```
-MONGO_URL=''
-INFURA_PROJECT_ID=''
+READ_MONGO_URL='' # Mongo URI for the database where it reads the `accounts` collection
+WRITE_MONGO_URL='' # Mongo URI for the database to save the `balance_history` collection
+
+READ_MONGO_DB='' # Database name where the `accounts` collection exists
+WRITE_MONGO_DB='' # Database name where to save the `balance_history` collection
+
+JSON_RPC_URL='' # RPC URL of the ethereum node
 
 ```
 
@@ -14,9 +19,11 @@ INFURA_PROJECT_ID=''
 
 ## Usage
 
-1. Configure the `hardhat.config.js` file to use the desired forking config. Defaults to `mainnet` by default.
-2. Run a hardhat node by `npm run run-node`. Will start a local node.
-3. Run the script by `npm run run-job`.
+Running the script for various networks. Make sure the `JSON_RPC_URL` points to the correct network.
+
+1. Ethereum mainnet - `NETWORK=mainnet npm start`
+1. Polygon - `NETWORK=polygon npm start`
+1. Fantom - `NETWORK=fantom npm start`
 
 ## How it works
 

@@ -1,16 +1,14 @@
-require('dotenv').config();
-
 const { ethers } = require('ethers');
 const TokenAbi = require('./abi/Token.json');
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_URL);
 
-const nativeTokens = {
+const NATIVE_TOKENS = {
     mainnet: 'ETH',
     polygon: 'MATIC',
     fantom: 'FTM',
 };
-const tokens = {
+const TOKENS = {
     mainnet: {
         GRT: '0xc944e90c64b2c07662a292be6244bdf05cda44a7',
         MATIC: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
@@ -29,8 +27,10 @@ const tokens = {
     },
 };
 
+const getNetworkTokenKey = (network) => `${network}_${NATIVE_TOKENS[network]}`;
+
 const getTokenContracts = (network) => {
-    const networkTokens = tokens[network];
+    const networkTokens = TOKENS[network];
     return Object.entries(networkTokens).reduce((acc, [network, tokenAddress]) => {
         acc[network] = new ethers.Contract(tokenAddress, TokenAbi, provider);
         return acc;
@@ -38,8 +38,7 @@ const getTokenContracts = (network) => {
 };
 
 const getUserBalances = async (userAddress, network, tokenContracts) => {
-    const networkTokens = tokens[network];
-    const nativeToken = nativeTokens[network];
+    const networkTokens = TOKENS[network];
 
     const nativeBalanceReq = provider.getBalance(userAddress);
     const tokenBalancesReq = Object.keys(networkTokens).map((token) => {
@@ -56,7 +55,7 @@ const getUserBalances = async (userAddress, network, tokenContracts) => {
 
     return {
         userAddress,
-        [`${network}_${nativeToken}`]: +ethers.utils.formatEther(nativeBalance),
+        [getNetworkTokenKey(network)]: +ethers.utils.formatEther(nativeBalance),
         ...tokenBalances,
     };
 };
@@ -64,4 +63,5 @@ const getUserBalances = async (userAddress, network, tokenContracts) => {
 module.exports = {
     getTokenContracts,
     getUserBalances,
+    getNetworkTokenKey,
 };

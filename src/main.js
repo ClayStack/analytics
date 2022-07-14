@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { formatDuration, intervalToDuration } = require('date-fns');
 
 const { handlers } = require('./db');
@@ -5,17 +6,20 @@ const { getUserBalances, getTokenContracts } = require('./get-balance');
 
 const BATCH_SIZE = 100;
 const MAX_PAGES = Infinity;
-const NETWORK = 'mainnet';
+const NETWORK = process.env.NETWORK || 'mainnet';
 
 const formatLabel = (label) => label.padEnd(24, ' ');
 
+const now = performance.now();
+
 const main = async () => {
-    const now = performance.now();
+    console.log(formatLabel('Running on network:'), NETWORK);
+    console.log(formatLabel('Batch size:'), BATCH_SIZE);
+
     await handlers.init();
-    const START_AT_PAGE = await handlers.getInitialPage(BATCH_SIZE);
+    const START_AT_PAGE = await handlers.getInitialPage(NETWORK, BATCH_SIZE);
 
     console.log(formatLabel('Starting at page:'), START_AT_PAGE);
-
     const tokenContracts = getTokenContracts(NETWORK);
 
     const totalUsers = await handlers.getUserCount();
@@ -34,7 +38,6 @@ const main = async () => {
             break;
         }
     }
-
     console.log(
         'Total time:',
         formatDuration(
@@ -48,4 +51,6 @@ const main = async () => {
 
 main()
     .catch(console.error)
-    .finally(() => process.exit());
+    .finally(() => {
+        process.exit();
+    });

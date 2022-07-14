@@ -1,6 +1,6 @@
-require('dotenv').config();
-
 const { MongoClient } = require('mongodb');
+const { getNetworkTokenKey } = require('./get-balance');
+
 const readClient = new MongoClient(process.env.READ_MONGO_URL);
 const writeClient = new MongoClient(process.env.WRITE_MONGO_URL);
 
@@ -13,10 +13,19 @@ const balanceHistory = writeDb.collection('balance_history');
 const handlers = {
     init: async () => {
         await Promise.all([readClient.connect(), writeClient.connect()]);
+
+        const balanceHistoryCollection = await writeDb
+            .listCollections({ name: 'balance_history' })
+            .toArray();
+        if (balanceHistoryCollection.length === 0) {
+            await writeDb.createCollection('balance_history');
+        }
     },
     getUserCount: async () => accounts.countDocuments(),
-    getInitialPage: async (batchSize = 100) => {
-        const count = await balanceHistory.countDocuments();
+    getInitialPage: async (network = 'mainnet', batchSize = 100) => {
+        const count = await balanceHistory.countDocuments({
+            [getNetworkTokenKey(network)]: { $exists: true },
+        });
         return Math.floor(count / batchSize);
     },
     getUsers: async (page, batchSize = 100) => {
