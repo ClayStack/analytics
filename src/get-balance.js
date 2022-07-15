@@ -1,7 +1,13 @@
 const { ethers } = require('ethers');
 const TokenAbi = require('./abi/Token.json');
 
-const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_URL);
+const ConnectionInfo = {
+	url: process.env.JSON_RPC_URL,
+	...(process.env.RPC_USER != '' && {user: process.env.RPC_USER}),
+	...(process.env.RPC_PASS != '' && {pass: process.env.RPC_PASS}) 
+};
+
+const provider = new ethers.providers.JsonRpcProvider(ConnectionInfo);
 
 const NATIVE_TOKENS = {
     mainnet: 'ETH',

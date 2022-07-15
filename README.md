@@ -12,6 +12,10 @@ READ_MONGO_DB='' # Database name where the `accounts` collection exists
 WRITE_MONGO_DB='' # Database name where to save the `balance_history` collection
 
 JSON_RPC_URL='' # RPC URL of the ethereum node
+
+RPC_USER='' # Username if JSON RPC is under basic authentication
+RPC_PASS='' # Password of JSON RPC basic AuthN
+
 ```
 
 -   `npm install`
