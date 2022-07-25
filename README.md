@@ -28,7 +28,7 @@ Running the script for various networks. Make sure the `JSON_RPC_URL` points to 
 1. Polygon - `NETWORK=polygon npm start`
 1. Fantom - `NETWORK=fantom npm start`
 
-## How it works
+## How it works - 
 
 1. The script will read users from the `accounts` table and batch them in a size of 100.
 2. By default we start at index 0, but in case we already have some data in the `balance_history`, we will start at that index, to avoid duplicate calls.
